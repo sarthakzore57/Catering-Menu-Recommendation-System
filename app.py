@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, render_template, request
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="public", static_url_path="")
 
 
 MENU_ITEMS = [
