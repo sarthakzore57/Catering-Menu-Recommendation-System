@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catering Menu Recommendation System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="background-scene" aria-hidden="true">
+        <div class="gradient-mesh mesh-1" data-parallax="-10"></div>
+        <div class="gradient-mesh mesh-2" data-parallax="14"></div>
+        <div class="gradient-mesh mesh-3" data-parallax="8"></div>
+        <div class="orb orb-1" data-parallax="18"></div>
+        <div class="orb orb-2" data-parallax="-14"></div>
+        <div class="orb orb-3" data-parallax="10"></div>
+        <div class="light-particles"></div>
+    </div>
+
+    <main class="page-shell">
+        <section class="hero-panel reveal">
+            <div class="hero-copy">
+                <span class="eyebrow">AI Catering Product</span>
+                <h1>Catering Menu Recommendation System</h1>
+                <p class="hero-text">
+                    Plan a catering menu based on budget, guests, and preferences. The system uses a greedy algorithm to recommend the best affordable combination.
+                </p>
+                <div class="hero-actions">
+                    <button class="primary-cta ripple-button" type="button" data-scroll-target="#planner">Plan Menu</button>
+                    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode">
+                        <span class="theme-toggle-track">
+                            <span class="theme-toggle-thumb"></span>
+                        </span>
+                        <span class="theme-toggle-label">Dark Mode</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="workspace-grid">
+            <aside class="control-panel reveal" id="planner">
+                <div class="panel-heading">
+                    <span class="section-tag">Input</span>
+                    <h2>Enter menu requirements</h2>
+                    <p>Provide your budget and preferences to generate a practical menu recommendation.</p>
+                </div>
+
+                <form id="recommendation-form" class="planner-form">
+                    <div class="field-group">
+                        <div class="field-header">
+                            <label for="budget">Budget</label>
+                            <span id="budget-display">Rs 5000</span>
+                        </div>
+                        <div class="budget-controls">
+                            <input id="budget-range" name="budget-range" type="range" min="500" max="50000" step="100" value="5000">
+                            <input id="budget" name="budget" type="number" min="1" step="0.01" value="5000" placeholder="Enter total budget" required>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="people">Number of Guests</label>
+                        <input id="people" name="people" type="number" min="1" step="1" placeholder="Optional">
+                    </div>
+
+                    <div class="field-group">
+                        <label for="preference">Food Preference</label>
+                        <div class="select-shell">
+                            <select id="preference" name="preference">
+                                <option value="all">All</option>
+                                <option value="veg">Veg</option>
+                                <option value="non-veg">Non-Veg</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <fieldset class="field-group category-group">
+                        <div class="field-header">
+                            <legend>Categories</legend>
+                            <span class="hint-inline">Optional</span>
+                        </div>
+                        <div class="category-options">
+                            {% for category in categories %}
+                            <label class="checkbox-pill">
+                                <input type="checkbox" name="categories" value="{{ category }}">
+                                <span>{{ category }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </fieldset>
+
+                    <button class="generate-button ripple-button" id="generate-button" type="submit">
+                        <span class="button-label">Get Recommendation</span>
+                        <span class="button-glow"></span>
+                    </button>
+                </form>
+
+                <div class="ai-note">
+                    <div class="ai-dot"></div>
+                    <p>The system ranks menu items by value-to-price ratio and builds recommendations within the given budget.</p>
+                </div>
+            </aside>
+
+            <section class="output-panel reveal">
+                <div class="output-header">
+                    <div>
+                        <span class="section-tag">Output</span>
+                        <h2>Recommended menu</h2>
+                        <p id="status-text">Your recommended menu will appear here after generation.</p>
+                    </div>
+                    <div class="summary-badge" id="summary-badge">Awaiting input</div>
+                </div>
+
+                <div class="thinking-panel" id="thinking-panel" hidden>
+                    <div class="thinking-copy">
+                        <strong>Generating Smart Menu...</strong>
+                        <p>Evaluating price-to-value efficiency, guest-aware quantity limits, and budget-fit combinations.</p>
+                    </div>
+                    <div class="thinking-visual">
+                        <div class="pulse-ring"></div>
+                        <div class="pulse-ring delay"></div>
+                        <div class="thinking-core">AI</div>
+                    </div>
+                    <div class="thinking-progress">
+                        <span class="thinking-dot"></span>
+                        <span class="thinking-dot"></span>
+                        <span class="thinking-dot"></span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+
+                <div class="summary-grid" id="summary-grid">
+                    <article class="stat-card tilt-card">
+                        <span>Total Cost</span>
+                        <strong id="total-cost">Rs 0</strong>
+                        <small>Optimized spend</small>
+                    </article>
+                    <article class="stat-card tilt-card">
+                        <span>Remaining Budget</span>
+                        <strong id="remaining-budget">Rs 0</strong>
+                        <small>Unused balance</small>
+                    </article>
+                    <article class="stat-card tilt-card">
+                        <span>Total Value Score</span>
+                        <strong id="total-value">0</strong>
+                        <small>Greedy score</small>
+                    </article>
+                    <article class="stat-card tilt-card">
+                        <span>Total Portions</span>
+                        <strong id="estimated-people">0</strong>
+                        <small>Servings proposed</small>
+                    </article>
+                </div>
+
+                <div class="menu-list" id="menu-list">
+                    <div class="empty-state">
+                        <h3>No menu generated yet</h3>
+                        <p>Submit your input to view the recommended catering menu.</p>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <section class="inventory-panel reveal">
+            <div class="panel-heading inventory-heading">
+                <div>
+                    <span class="section-tag">Menu Items</span>
+                    <h2>Available dishes</h2>
+                </div>
+                <p>These predefined dishes are used by the recommendation engine.</p>
+            </div>
+
+            <div class="inventory-grid">
+                {% for item in menu_items %}
+                <article class="inventory-card tilt-card">
+                    <div class="inventory-image-wrap">
+                        <img src="{{ item.image }}" alt="{{ item.name }}">
+                    </div>
+                    <div class="inventory-content">
+                        <div class="inventory-meta">
+                            <span>{{ item.category }}</span>
+                            <span class="type-pill {{ item.type }}">{{ item.type }}</span>
+                        </div>
+                        <h3>{{ item.name }}</h3>
+                        <p>{{ item.description }}</p>
+                        <div class="inventory-price">
+                            <strong>Rs {{ item.price }}</strong>
+                            <small>Value {{ item.value }}</small>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
